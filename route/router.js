@@ -61,10 +61,6 @@ router.post('/login', (req, res) => {
         })
       }
     // usually this would be a database call:
-    // const user = {
-    //     username: 'admin',
-    //     password: 'admin'
-    // };
     const user = users[_.findIndex(users, {username: username})];
     if(!user){
         res.status(401).json({message:"no such user found"});
@@ -82,9 +78,6 @@ router.post('/login', (req, res) => {
         const payload = {
             'id': user.id
         }
-        // const payload = {
-        //     'username': username
-        // }
         const token = jwt.sign(payload, jwtOptions.secretOrKey);
         return res.send({
             error: false,
