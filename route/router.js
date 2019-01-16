@@ -17,8 +17,7 @@ const users = [
 ];
 
 let jwtOptions = {}
-
-jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt')
 jwtOptions.secretOrKey = 'nicenice';
 
 const strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next) {
@@ -46,10 +45,6 @@ router.use(bodyParser.urlencoded({
 // parse application/json
 router.use(bodyParser.json())
 
-router.get('/yes', (req, res) => {
-    res.send('This also works!');
-});
-
 router.post('/login', (req, res) => {
     const { username } = req.body;
     const { password } = req.body;
@@ -74,7 +69,6 @@ router.post('/login', (req, res) => {
     }
 
     if (password === user.password){
-       
         const payload = {
             'id': user.id
         }
@@ -95,17 +89,7 @@ router.post('/login', (req, res) => {
 
 });
 
-// router.get("/countries", passport.authenticate('jwt', { session: false }), function(req, res){
-//     console.log('I got here')
-//     res.send({
-//         error: false,
-//         statusCode: 200,
-//         message: "Data gotten successfully",
-//         data: countries
-//     })
-// });
-
-router.get("/countries", (req, res) => {
+router.get("/countries", passport.authenticate('jwt', { session: false }), function(req, res){
     console.log('I got here')
     res.send({
         error: false,
@@ -115,7 +99,7 @@ router.get("/countries", (req, res) => {
     })
 });
 
-router.put('/countries', (req, res) => {
+router.put('/countries', passport.authenticate('jwt', { session: false }), function(req, res){
     const { country } = req.body;
     countries.push(country);
     return res.send({
@@ -126,7 +110,7 @@ router.put('/countries', (req, res) => {
     })
 });
 
-router.delete('/countries', (req, res) => {
+router.delete('/countries', passport.authenticate('jwt', { session: false }), function(req, res){
     const { country } = req.body;
     const index = countries.indexOf(country);
     if (index !== -1) {
